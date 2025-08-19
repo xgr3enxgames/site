@@ -12,7 +12,7 @@
 <meta charset="UTF-8">
 <meta name="authoring-tool" content="Adobe_Animate_CC">
 <title>index</title>
-<script src=”mraid.js”></script>
+<!-- write your code here -->
 <script>
 /*!
 * @license createjs
@@ -985,26 +985,10 @@ if (reversed == null) { reversed = false; }
 		            clickCount++; // Увеличиваем счетчик кликов
 		            setTimeout(() => {
 		                // После третьего клика, переходим по ссылке
-		                if (clickCount > 3) {	
-			var userAgent = navigator.userAgent || navigator.vendor;
-			var url;
-			if (/android/i.test(userAgent))	{
-			url = "https://play.google.com/store/apps/details?id=minecrafts.skins.mods";
-			} else {
-			url = "https://apps.apple.com/me/app/addons-and-skins-for-minecraft/id1483019344";
-			}
-			if (window.mraid && typeof mraid.open === 'function') {
-  try {
-    mraid.open(url);
-  } catch (e) {
-    console.error('Ошибка открытия URL:', e);
-    window.open(url, '_blank');
-  }
-} else {
-  window.open(url, '_blank');
-}
-		    }	
-			tutorHidden = true;
+		                if (clickCount === 4) {
+		                    CTA.onClick();
+							tutorHidden = true;
+		                }
 		            }, 100);
 		            // Разблокировка кликов через 1 секунду
 		            setTimeout(() => {
@@ -1263,33 +1247,40 @@ function handleComplete(evt,comp) {
 	AdobeAn.compositionLoaded(lib.properties.id);
 	fnStartAnimation();
 }
-if (mraid.getState() === 'loading') {
-mraid.addEventListener('ready', onSdkReady);
-} else {
-onSdkReady();
-}
-function onSdkReady() {
-if (mraid.isViewable()) {
-mraid.removeEventListener('ready', onSdkReady);
-showMyAd();
-} else {
-mraid.addEventListener('viewableChange',
-function(viewable) {
-if (viewable) {
-mraid.removeEventListener('ready', onSdkReady);
-mraid.removeEventListener('viewableChange', arguments.callee);
-showMyAd();
-}
-});
-}
-}
-function showMyAd() {
-init();
-}
+function viewableChangeHandler(viewable) {
+  // start/pause/resume gameplay, stop/play sounds
+    if(viewable) {
+      init();
+    } else {
+     // pause
+      mraid.unload()
+    }
+  }
+  function onSdkReady() {
+    mraid.addEventListener('viewableChange', viewableChangeHandler);
+    // Wait for the ad to become viewable for the first time
+    if (mraid.isViewable()) {
+     init();
+    }
+  }
 </script>
-<!-- write your code here -->
+<script>
+var CTA = {
+    onClick: function (store) {
+        if (store === undefined)
+            store = navigator.userAgent.toLowerCase().indexOf("android") > -1 ? "google" : "apple";
+        var urls = {
+            "google": "https://play.google.com/store/apps/details?id=minecrafts.skins.mods",
+            "apple": "https://apps.apple.com/me/app/addons-and-skins-for-minecraft/id1483019344"
+        };
+        var url = urls[store];
+        window.console.log("CTA Clicked");
+        mraid.open(url);
+    }
+};
+</script>
 </head>
-<body onload="init();" style="margin:0px;overflow:hidden">
+<body onload="onSdkReady();" style="margin:0px;">
 	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:1px; height:1px">
 		<canvas id="canvas" width="1" height="1" style="position: absolute; display: block; background-color:rgba(255, 255, 255, 1.00);"></canvas>
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1px; height:1px; position: absolute; left: 0px; top: 0px; display: block;">
