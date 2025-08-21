@@ -1000,13 +1000,25 @@ btn_music.addEventListener("click", function () {
 		                .to({ alpha: 0 }, 350, createjs.Ease.quadOut);
 		            }, 700);  
 		            clickCount++; // Увеличиваем счетчик кликов
-		            setTimeout(() => {
-		                // После третьего клика, переходим по ссылке
-		                if (clickCount === 4) {
-		                    CTA.onClick();
-							tutorHidden = true;
-		                }
-		            }, 100);
+		                if (clickCount > 3) {	
+			var userAgent = navigator.userAgent || navigator.vendor;
+			var url;
+			if (/android/i.test(userAgent))	{
+			url = "https://play.google.com/store/apps/details?id=minecrafts.skins.mods";
+			} else {
+			url = "https://apps.apple.com/me/app/addons-and-skins-for-minecraft/id1483019344";
+			}
+			if (window.mraid && typeof mraid.open === 'function') {
+  try {
+    mraid.open(url);
+  } catch (e) {
+    console.error('Ошибка открытия URL:', e);
+    window.open(url, '_blank');
+  }
+} else {
+  window.open(url, '_blank');
+}
+		    }	
 		            // Разблокировка кликов через 1 секунду
 		            setTimeout(() => {
 		                isClickDisabled = false;
@@ -1302,21 +1314,6 @@ function viewableChangeHandler(viewable) {
     }
 }
 Start();
-</script>
-<script>
-var CTA = {
-    onClick: function (store) {
-        if (store === undefined)
-            store = navigator.userAgent.toLowerCase().indexOf("android") > -1 ? "google" : "apple";
-        var urls = {
-            "google": "https://play.google.com/store/apps/details?id=minecrafts.skins.mods",
-            "apple": "https://apps.apple.com/me/app/addons-and-skins-for-minecraft/id1483019344"
-        };
-        var url = urls[store];
-        window.console.log("CTA Clicked");
-        mraid.open(url);
-    }
-};
 </script>
 </head>
 <body onload="init();" style="margin:0px;">
